@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MiniIdentity.Application.DTOs.Requests
+﻿namespace MiniIdentity.Application.DTOs.Requests
 {
     public class RegisterRequestDto
     {
