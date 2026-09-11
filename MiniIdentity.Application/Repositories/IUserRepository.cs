@@ -8,5 +8,8 @@ namespace MiniIdentity.Application.Repositories
 
         Task<bool> ExistsByUsernameAsync(string normalizedUsername);
         Task<bool> ExistsByEmailAsync(string normalizedEmail);
+
+        Task<User?> GetByUsernameAsync(string normalizedUsername);
+        Task<User?> GetByEmailAsync(string normalizedEmail);
     }
 }

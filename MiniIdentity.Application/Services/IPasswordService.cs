@@ -6,6 +6,7 @@ namespace MiniIdentity.Enterprise.Services
     {
         string GenerateSalt();
         string HashPassword(string password, string salt);
-        PasswordHashResult HashPassword(string password);
+        PasswordHashResult HashPassword(string password);   
+        bool VerifyPassword(string password, string passwordHash, string salt);
     }
 }
