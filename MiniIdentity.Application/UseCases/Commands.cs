@@ -5,4 +5,6 @@ using MiniIdentity.Application.DTOs.Responses;
 namespace MiniIdentity.Application.UseCases
 {
     public record Register(RegisterRequestDto Input) : IRequest<UserResponseDto>;
+
+    public record Login(LoginRequestDto LoginInput) : IRequest<LoginResultDto>;
 }
