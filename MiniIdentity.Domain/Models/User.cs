@@ -1,4 +1,6 @@
-﻿namespace MiniIdentity.Enterprise.Models
+﻿using MiniIdentity.Enterprise.Configurations;
+
+namespace MiniIdentity.Enterprise.Models
 {
     //public class User
     //{
@@ -204,6 +206,40 @@
         public void VerifyEmail()
         {
             HasEmailBeenVerified = true;
+            Modify();
+        }
+
+        public void IncrementFailedLoginAttempts()
+        {
+            FailedLoginAttempts++;
+            Modify();
+        }
+
+        // Alter name "ShouldLockout"
+        public bool HasAchievedMaxFailedLoginAttempts() { return FailedLoginAttempts >= DefaultIdentityConfiguration.MaximumFailedLoginAttempts; }
+
+        public void LockUntil() 
+        {
+            LockoutEnd = DateTime.UtcNow.AddMinutes(DefaultIdentityConfiguration.LockoutTime); 
+            Modify();
+        }
+
+        public void ResetFailedLoginAttempts() 
+        {
+            LockoutEnd = null;
+            FailedLoginAttempts = 0;
+            Modify();
+        }
+
+        public void RegisterLogin() 
+        {
+            LastLogin = DateTime.UtcNow; 
+            Modify();
+        }
+
+        public void AddRefreshToken(RefreshToken token) 
+        {
+            RefreshTokens.Add(token); 
             Modify();
         }
     }
