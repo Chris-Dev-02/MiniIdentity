@@ -29,7 +29,7 @@ namespace MiniIdentity.Application.UseCases.Commands
                 throw new Exception("Refresh token not found");
 
             if (!refreshToken.IsActive)
-                throw new Exception("Refresh token is already inactive");
+                return true;
 
             refreshToken.Revoke();
 
