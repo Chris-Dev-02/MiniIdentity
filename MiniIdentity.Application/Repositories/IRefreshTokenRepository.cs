@@ -4,6 +4,6 @@ namespace MiniIdentity.Application.Repositories
 {
     public interface IRefreshTokenRepository
     {
-        Task<RefreshToken> GetByTokenAsync(string token);
+        Task<RefreshToken?> GetByTokenAsync(string token);
     }
 }
