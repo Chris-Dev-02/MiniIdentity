@@ -11,5 +11,7 @@ namespace MiniIdentity.Application.Repositories
 
         Task<User?> GetByUsernameAsync(string normalizedUsername);
         Task<User?> GetByEmailAsync(string normalizedEmail);
+
+        Task<User?> GetByIdAsync(string userId);
     }
 }
