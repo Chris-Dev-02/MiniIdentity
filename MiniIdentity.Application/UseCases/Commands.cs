@@ -11,4 +11,6 @@ namespace MiniIdentity.Application.UseCases
     public record Logout(string RefreshToken) : IRequest<bool>;
 
     public record RefreshAccessToken(RefreshTokenRequestDto RefreshTokenInput) : IRequest<RefreshTokenResultDto>;
+
+    public record ChangePassword(ChangePasswordRequestDto ChangePasswordInput) : IRequest<bool>;
 }
