@@ -242,5 +242,15 @@ namespace MiniIdentity.Enterprise.Models
             RefreshTokens.Add(token); 
             Modify();
         }
+
+        public void RevokeAllRefreshTokens()
+        {
+            foreach (var refreshToken in RefreshTokens.Where(x => x.IsActive))
+            {
+                refreshToken.Revoke();
+            }
+
+            Modify();
+        }
     }
 }
