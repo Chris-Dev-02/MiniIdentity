@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using HopperSoftware.Exceptions.Exceptions;
+using MediatR;
 using MiniIdentity.Application.Repositories;
+using MiniIdentity.Enterprise.Exceptions;
 
 namespace MiniIdentity.Application.UseCases.Commands
 {
@@ -21,7 +23,7 @@ namespace MiniIdentity.Application.UseCases.Commands
             var refreshToken = await _refreshTokenRepository.GetByTokenAsync(request.RefreshToken);
 
             if (refreshToken is null)
-                throw new Exception("Refresh token not found");
+                throw new NotFoundException(Modules.RefreshToken, nameof(refreshToken), "Refresh token not found");
 
             if (!refreshToken.IsActive)
                 return true;

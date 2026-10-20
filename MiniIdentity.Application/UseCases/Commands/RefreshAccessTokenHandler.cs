@@ -1,7 +1,9 @@
-﻿using MediatR;
+﻿using HopperSoftware.Exceptions.Exceptions;
+using MediatR;
 using MiniIdentity.Application.DTOs.Responses;
 using MiniIdentity.Application.Repositories;
 using MiniIdentity.Application.Services;
+using MiniIdentity.Enterprise.Exceptions;
 using MiniIdentity.Enterprise.Models;
 
 namespace MiniIdentity.Application.UseCases.Commands
@@ -39,24 +41,24 @@ namespace MiniIdentity.Application.UseCases.Commands
                     request.RefreshTokenInput.RefreshToken);
 
             if (refreshToken is null)
-                throw new Exception("Refresh token not found");
+                throw new NotFoundException(Modules.User, nameof(refreshToken), "Refresh token was not found");
 
             // The refresh token must still be active.
             if (!refreshToken.IsActive)
-                throw new Exception("Refresh token is no longer active");
+                throw new ClientException(Errors.InvalidState, Modules.RefreshToken, "Refresh token is not active");
 
             // Find the user associated with the refresh token.
             User? userFound =
                 await _userRepository.GetByIdAsync(refreshToken.UserId);
 
             if (userFound is null)
-                throw new Exception("User not found");
+                throw new NotFoundException(Modules.User, nameof(userFound), "User was not found");
 
             if (!userFound.IsActive)
-                throw new Exception("User is not active");
+                throw new ClientException(Errors.InvalidState, Modules.User, "User is not active");
 
             if (userFound.IsBlocked)
-                throw new Exception("User is blocked");
+                throw new ClientException(Errors.InvalidState, Modules.User, "User is blocked");
 
             // Get the user's roles to include them in the new access token.
             var roles =

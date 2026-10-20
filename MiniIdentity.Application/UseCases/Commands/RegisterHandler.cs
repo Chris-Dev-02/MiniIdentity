@@ -42,7 +42,7 @@ namespace MiniIdentity.Application.UseCases.Commands
             // If it is missing, creating the user without a valid role would leave the
             // registration in an inconsistent state.
             if (roleFound == null)
-                throw new Exception();
+                throw new Exception("Refresh token is no longer active");
 
             // Check for an existing username before creating the user.
             // The comparison should use the same normalization strategy used when storing

@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using HopperSoftware.Exceptions.Exceptions;
 using MediatR;
 using MiniIdentity.Application.DTOs.Requests;
 using MiniIdentity.Application.DTOs.Responses;
 using MiniIdentity.Application.Repositories;
 using MiniIdentity.Application.Services;
 using MiniIdentity.Enterprise.Configurations;
+using MiniIdentity.Enterprise.Exceptions;
 using MiniIdentity.Enterprise.Models;
 using MiniIdentity.Enterprise.Services;
 
@@ -44,22 +46,22 @@ namespace MiniIdentity.Application.UseCases.Commands
             User? userFound = await FindUserAsync(request.LoginInput);
 
             if (userFound is null)
-                throw new Exception("Invalid user or password");
+                throw new NotFoundException(Modules.User, nameof(userFound), "User was not found");
 
             if (!userFound.IsActive)
-                throw new Exception("User is not active");
+                throw new ClientException(Errors.InvalidState, Modules.User, "User is not active");
 
             if (userFound.IsBlocked)
-                throw new Exception("User is blocked");
+                throw new ClientException(Errors.InvalidState, Modules.User, "User is blocked");
 
             if (!userFound.HasEmailBeenVerified && DefaultIdentityConfiguration.EmailMustBeVerified)
-                throw new Exception("You must verified your account");
+                throw new ClientException(Errors.InvalidOperation, Modules.User, "User must be verified", nameof(request.LoginInput.Email));
 
             // A temporary lockout takes precedence over password validation.
             // This prevents login attempts from being processed while the lockout is still active.
             if (userFound.LockoutEnd.HasValue &&
                     userFound.LockoutEnd > DateTime.UtcNow)
-                throw new Exception("User lockout");
+                throw new ClientException(Errors.InvalidState, Modules.User, "User is lockout");
 
 
             if(!_passwordService.VerifyPassword(request.LoginInput.Password, userFound.PasswordHash, userFound.Salt))
@@ -74,13 +76,13 @@ namespace MiniIdentity.Application.UseCases.Commands
 
                     await _uow.SaveChangesAsync();
 
-                    throw new Exception("User has achieved max filed login attempts");
+                    throw new ClientException(Errors.InvalidOperation, Modules.User, "User has achieved mas filed login attempts", nameof(request.LoginInput.Password));
                 }
 
                 // Persist the failed attempt even when the account has not been locked yet.
                 await _uow.SaveChangesAsync();
 
-                throw new Exception("Invalid user or password");
+                throw new ClientException(Errors.InvalidOperation, Modules.User, "Invalid user password", nameof(request.LoginInput.Password));
             }
 
             // A successful login clears the previous failed-attempt counter
@@ -106,7 +108,7 @@ namespace MiniIdentity.Application.UseCases.Commands
                 if (DefaultIdentityConfiguration.ShouldRevokeLastSession)
                     userFound.RefreshTokens.FirstOrDefault(x => x.IsActive)?.Revoke(refreshToken.Token);
                 else
-                    throw new Exception("There's already an active session");
+                    throw new ClientException(Errors.InvalidOperation, Modules.User, "There's already an active session");
             }
 
             userFound.AddRefreshToken(refreshToken);

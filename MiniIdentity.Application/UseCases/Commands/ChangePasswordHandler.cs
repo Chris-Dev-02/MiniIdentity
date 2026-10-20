@@ -1,5 +1,7 @@
-﻿using MediatR;
+﻿using HopperSoftware.Exceptions.Exceptions;
+using MediatR;
 using MiniIdentity.Application.Repositories;
+using MiniIdentity.Enterprise.Exceptions;
 using MiniIdentity.Enterprise.Models;
 using MiniIdentity.Enterprise.Services;
 
@@ -29,13 +31,13 @@ namespace MiniIdentity.Application.UseCases.Commands
                 await _userRepository.GetByIdAsync(request.ChangePasswordInput.UserId);
 
             if (userFound is null)
-                throw new Exception("User not found");
+                throw new NotFoundException(Modules.User, nameof(request.ChangePasswordInput.UserId), "There's no user with that id");
 
             if (!userFound.IsActive)
-                throw new Exception("User is not active");
+                throw new ClientException(Errors.InvalidState, Modules.User, "User isn't active", nameof(userFound.IsActive));
 
             if (userFound.IsBlocked)
-                throw new Exception("User is blocked");
+                throw new ClientException(Errors.InvalidState, Modules.User, "User is blocked", nameof(userFound.IsBlocked));
 
             bool currentPasswordIsValid =
                 _passwordService.VerifyPassword(
@@ -44,13 +46,12 @@ namespace MiniIdentity.Application.UseCases.Commands
                     userFound.Salt);
 
             if (!currentPasswordIsValid)
-                throw new Exception("Current password is incorrect");
+                throw new ClientException(Errors.InvalidOperation, Modules.User, "Password isn't correct", nameof(userFound.IsActive));
 
             if (request.ChangePasswordInput.CurrentPassword ==
                 request.ChangePasswordInput.NewPassword)
             {
-                throw new Exception(
-                    "New password must be different from current password");
+                throw new ClientException(Errors.InvalidOperation, Modules.User, "New password must be different from current password", nameof(request.ChangePasswordInput.NewPassword));
             }
 
             string salt = _passwordService.GenerateSalt();
