@@ -100,7 +100,7 @@
     //    public bool GetIsBlocked() => IsBlocked;
     //}
 
-    public class User
+    public class User : Entity
     {
         public User(string username, string email, string passwordHash, string salt)
         {
@@ -115,7 +115,7 @@
             PasswordHash = passwordHash;
             Salt = salt;
 
-            Created = DateTime.UtcNow;
+            Created = DateTimeOffset.UtcNow;
         }
 
         public string Id { get; private set; }
@@ -134,23 +134,28 @@
         public bool IsActive { get; private set; } = true;
 
         public int FailedLoginAttempts { get; private set; }
-        public DateTime? LockoutEnd { get; private set; }
+        public DateTimeOffset? LockoutEnd { get; private set; }
 
-        public DateTime Created { get; private set; }
-        public DateTime? LastModified { get; private set; }
-        public DateTime? LastLogin { get; private set; }
+        public DateTimeOffset Created { get; private set; }
+        public DateTimeOffset? LastModified { get; private set; }
+        public DateTimeOffset? LastLogin { get; private set; }
 
         public ICollection<UserRole> UserRoles { get; private set; } = new List<UserRole>();
         public ICollection<RefreshToken> RefreshTokens { get; private set; } = new List<RefreshToken>();
 
+        protected override void Validate()
+        {
+            base.Validate();
+        }
+
         private void Modify()
         {
-            LastModified = DateTime.UtcNow;
+            LastModified = DateTimeOffset.UtcNow;
         }
 
         public void SetLoginDate()
         {
-            LastLogin = DateTime.UtcNow;
+            LastLogin = DateTimeOffset.UtcNow;
             Modify();
         }
 

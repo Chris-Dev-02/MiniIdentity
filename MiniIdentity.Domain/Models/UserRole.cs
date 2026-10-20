@@ -19,11 +19,11 @@
         {
             UserId = userId;
             RoleId = roleId;
-            Created = DateTime.UtcNow;
+            Created = DateTimeOffset.UtcNow;
         }
 
         public string UserId { get; private set; }
         public string RoleId { get; private set; }
-        public DateTime Created { get; private set; }
+        public DateTimeOffset Created { get; private set; }
     }
 }
