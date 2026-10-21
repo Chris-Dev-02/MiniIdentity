@@ -22,28 +22,28 @@ namespace MiniIdentity.Adapters.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("MiniIdentity.Domain.RefreshToken", b =>
+            modelBuilder.Entity("MiniIdentity.Enterprise.Models.RefreshToken", b =>
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("CreatedByIp")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("ExpirationDate")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("ReplacedByToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("RevokedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Token")
                         .IsRequired()
@@ -65,22 +65,22 @@ namespace MiniIdentity.Adapters.Migrations
                     b.ToTable("RefreshTokens", (string)null);
                 });
 
-            modelBuilder.Entity("MiniIdentity.Domain.Role", b =>
+            modelBuilder.Entity("MiniIdentity.Enterprise.Models.Role", b =>
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("LastModified")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -100,14 +100,14 @@ namespace MiniIdentity.Adapters.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("MiniIdentity.Domain.User", b =>
+            modelBuilder.Entity("MiniIdentity.Enterprise.Models.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -126,14 +126,14 @@ namespace MiniIdentity.Adapters.Migrations
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime?>("LastLogin")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("LastLogin")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("LastModified")
+                        .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime?>("LockoutEnd")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
                         .IsRequired()
@@ -171,7 +171,7 @@ namespace MiniIdentity.Adapters.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("MiniIdentity.Domain.UserRole", b =>
+            modelBuilder.Entity("MiniIdentity.Enterprise.Models.UserRole", b =>
                 {
                     b.Property<string>("UserId")
                         .HasMaxLength(50)
@@ -181,8 +181,8 @@ namespace MiniIdentity.Adapters.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("Created")
+                        .HasColumnType("datetimeoffset");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -191,9 +191,9 @@ namespace MiniIdentity.Adapters.Migrations
                     b.ToTable("UserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("MiniIdentity.Domain.RefreshToken", b =>
+            modelBuilder.Entity("MiniIdentity.Enterprise.Models.RefreshToken", b =>
                 {
-                    b.HasOne("MiniIdentity.Domain.User", "User")
+                    b.HasOne("MiniIdentity.Enterprise.Models.User", "User")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -202,27 +202,27 @@ namespace MiniIdentity.Adapters.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("MiniIdentity.Domain.UserRole", b =>
+            modelBuilder.Entity("MiniIdentity.Enterprise.Models.UserRole", b =>
                 {
-                    b.HasOne("MiniIdentity.Domain.Role", null)
+                    b.HasOne("MiniIdentity.Enterprise.Models.Role", null)
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MiniIdentity.Domain.User", null)
+                    b.HasOne("MiniIdentity.Enterprise.Models.User", null)
                         .WithMany("UserRoles")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MiniIdentity.Domain.Role", b =>
+            modelBuilder.Entity("MiniIdentity.Enterprise.Models.Role", b =>
                 {
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("MiniIdentity.Domain.User", b =>
+            modelBuilder.Entity("MiniIdentity.Enterprise.Models.User", b =>
                 {
                     b.Navigation("RefreshTokens");
 
