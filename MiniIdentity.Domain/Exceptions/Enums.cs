@@ -4,7 +4,8 @@
     {
         User = 0,
         Role = 1,
-        RefreshToken = 2
+        UserRole = 2,
+        RefreshToken = 3
     }
 
     public enum Errors

@@ -1,4 +1,7 @@
-﻿namespace MiniIdentity.Enterprise.Models
+﻿using HopperSoftware.Exceptions.Exceptions;
+using MiniIdentity.Enterprise.Exceptions;
+
+namespace MiniIdentity.Enterprise.Models
 {
     /// <summary>
     /// Represents a user within the system, including authentication and account state information.
@@ -23,6 +26,8 @@
             Salt = salt;
 
             Created = DateTimeOffset.UtcNow;
+
+            Validate();
         }
 
         public string Id { get; private set; }
@@ -65,6 +70,18 @@
         protected override void Validate()
         {
             base.Validate();
+
+            if (string.IsNullOrEmpty(Username))
+                throw new ClientException(Errors.RequiredField, Modules.User, "Username is required");
+
+            if (string.IsNullOrEmpty(Email))
+                throw new ClientException(Errors.RequiredField, Modules.User, "Email is required");
+
+            if (string.IsNullOrEmpty(PasswordHash))
+                throw new ClientException(Errors.RequiredField, Modules.User, "Password hash is required");
+
+            if (string.IsNullOrEmpty(Salt))
+                throw new ClientException(Errors.RequiredField, Modules.User, "Salt is required");
         }
 
         /// <summary>

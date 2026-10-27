@@ -1,4 +1,7 @@
-﻿namespace MiniIdentity.Enterprise.Models
+﻿using HopperSoftware.Exceptions.Exceptions;
+using MiniIdentity.Enterprise.Exceptions;
+
+namespace MiniIdentity.Enterprise.Models
 {
     /// <summary>
     /// Represents a refresh token used for user authentication and session management.
@@ -22,6 +25,8 @@
             ExpirationDate = expirationDate;
             CreatedByIp = createdByIp;
             Created = DateTimeOffset.UtcNow;
+
+            Validate();
         }
 
         public string Id { get; private set; }
@@ -64,6 +69,18 @@
         protected override void Validate()
         {
             base.Validate();
+
+            if (string.IsNullOrEmpty(UserId))
+                throw new ClientException(Errors.RequiredField, Modules.RefreshToken, "UserId is required");
+
+            if (UserId.Length > GlobalValues.KeyLength)
+                throw new ClientException(Errors.InvalidSize, Modules.RefreshToken, $"UserId must not exceed {GlobalValues.KeyLength} characters");
+
+            if (string.IsNullOrEmpty(Token))
+                throw new ClientException(Errors.RequiredField, Modules.RefreshToken, "Token is required");
+
+            if (string.IsNullOrEmpty(CreatedByIp))
+                throw new ClientException(Errors.RequiredField, Modules.RefreshToken, "Ip is required");
         }
 
         /// <summary>

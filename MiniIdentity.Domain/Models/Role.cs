@@ -1,4 +1,7 @@
-﻿namespace MiniIdentity.Enterprise.Models
+﻿using HopperSoftware.Exceptions.Exceptions;
+using MiniIdentity.Enterprise.Exceptions;
+
+namespace MiniIdentity.Enterprise.Models
 {
     /// <summary>
     /// Represents a role within the system, including its metadata and associated users.
@@ -15,6 +18,8 @@
             NormalizedName = name.ToUpperInvariant();
             Description = description;
             Created = DateTimeOffset.UtcNow;
+
+            Validate();
         }
 
         public string Id { get; private set; }
@@ -36,6 +41,19 @@
         protected override void Validate()
         {
             base.Validate();
+
+            if (string.IsNullOrEmpty(Name))
+                throw new ClientException(Errors.RequiredField, Modules.Role, "Name is required");
+
+            if (Name.Length > GlobalValues.ShortField)
+                throw new ClientException(Errors.InvalidSize, Modules.Role, $"Name must not exceed {GlobalValues.ShortField} characters");
+
+            if (string.IsNullOrEmpty(Description))
+                throw new ClientException(Errors.RequiredField, Modules.Role, "Description is required");
+
+            if (Description.Length > GlobalValues.LongField)
+                throw new ClientException(Errors.InvalidSize, Modules.Role, $"Description must not exceed {GlobalValues.LongField} characters");
+
         }
 
         /// <summary>
